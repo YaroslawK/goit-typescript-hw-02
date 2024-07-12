@@ -25,12 +25,12 @@ const App: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<ImageS | null>(null);
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchImages = async (): Promise<void> => {
       if (!query) return;
 
       try {
         setIsLoading(true);
-        const newImages = await getImages(query, 10);
+        const newImages: ImageS[] = await getImages(query, 10);
         setImages(newImages);
         setError(null);
       } catch (error: unknown) {

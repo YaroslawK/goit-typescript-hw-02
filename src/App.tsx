@@ -50,7 +50,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isLoadingMore) return;
 
-    const fetchMoreImages = async () => {
+    const fetchMoreImages = async (): Promise<void> => {
       try {
         const newImages = await getImages(query, 10, page);
         setImages((prevImages) => [...prevImages, ...newImages]);

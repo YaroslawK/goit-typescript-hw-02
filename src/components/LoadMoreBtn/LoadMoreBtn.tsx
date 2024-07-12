@@ -1,4 +1,8 @@
-const LoadMoreBtn = ({ handleLoadMore }) => {
+interface LoadMoreBtnProps {
+  handleLoadMore: () => void;
+}
+
+const LoadMoreBtn: React.FC<LoadMoreBtnProps> = ({ handleLoadMore }) => {
   return (
     <button onClick={handleLoadMore}>
       Load more
@@ -7,5 +11,3 @@ const LoadMoreBtn = ({ handleLoadMore }) => {
 };
 
 export default LoadMoreBtn;
-
-

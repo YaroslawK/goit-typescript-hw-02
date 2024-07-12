@@ -1,21 +1,28 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import getImages from './images-api'
+import getImages from './images-api';
 import SearchBar from './components/SearchBar/SearchBar';
 import ImageGallery from './components/ImageGallery/ImageGallery';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import ImageModal from './components/ImageModal/ImageModal';
-import { Oval } from 'react-loader-spinner'
+import { Oval } from 'react-loader-spinner';
 
-function App() {
-  const [images, setImages] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+interface ImageS {
+  id: string;
+  urls: { regular: string };
+  title: string;
+  description: string;
+}
+
+const App: React.FC = () => {
+  const [images, setImages] = useState<ImageS[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<ImageS | null>(null);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -26,8 +33,12 @@ function App() {
         const newImages = await getImages(query, 10);
         setImages(newImages);
         setError(null);
-      } catch (error) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('Unknown error occurred');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -42,10 +53,14 @@ function App() {
     const fetchMoreImages = async () => {
       try {
         const newImages = await getImages(query, 10, page);
-        setImages((prevImages) => [...prevImages, ...newImages]); 
+        setImages((prevImages) => [...prevImages, ...newImages]);
         setError(null);
-      } catch (error) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('Unknown error occurred');
+        }
       } finally {
         setIsLoadingMore(false);
       }
@@ -54,11 +69,11 @@ function App() {
     fetchMoreImages();
   }, [isLoadingMore, page, query]);
 
-  const onSubmit = (searchQuery) => {
+  const onSubmit = (searchQuery: string) => {
     if (searchQuery !== query) {
       setQuery(searchQuery);
-      setPage(1); 
-      setImages([]); 
+      setPage(1);
+      setImages([]);
     }
   };
 
@@ -67,7 +82,7 @@ function App() {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: ImageS) => {
     setSelectedImage(image);
   };
 
@@ -82,8 +97,8 @@ function App() {
       {isLoading && (
         <Oval
           visible={true}
-          height="80"
-          width="80"
+          height={80}
+          width={80}
           color="#4fa94d"
           ariaLabel="oval-loading"
           wrapperStyle={{}}
@@ -95,8 +110,8 @@ function App() {
         isLoadingMore ? (
           <Oval
             visible={true}
-            height="80"
-            width="80"
+            height={80}
+            width={80}
             color="#4fa94d"
             ariaLabel="oval-loading"
             wrapperStyle={{}}
@@ -109,8 +124,6 @@ function App() {
       <ImageModal isOpen={!!selectedImage} onRequestClose={handleCloseModal} image={selectedImage} />
     </div>
   );
-}
-
-
+};
 
 export default App;
